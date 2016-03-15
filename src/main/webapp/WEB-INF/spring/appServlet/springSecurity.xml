@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+	<security:http auto-config="true">		
+		<security:form-login login-page='/login' authentication-failure-url="/login?login_error=1" default-target-url="/loginSuccess"/>		
+				
+		<security:intercept-url pattern="/addressProcess" access="ROLE_USER"/>
+		<security:intercept-url pattern="/updateProfileProcess" access="ROLE_USER"/>
+		<security:intercept-url pattern="/cart" access="ROLE_USER"/>
+		<security:intercept-url pattern="/Cartupdate" access="ROLE_USER"/>
+		<security:intercept-url pattern="/paymentController" access="ROLE_USER"/>
+		<security:intercept-url pattern="/placeOrderController" access="ROLE_USER"/>
+		<security:intercept-url pattern="/checkout" access="ROLE_USER"/>
+		<security:intercept-url pattern="/Products" access="ROLE_USER"/>
+		<security:intercept-url pattern="/addressController" access="ROLE_USER"/>
+		<security:intercept-url pattern="/modifyAddressController" access="ROLE_USER"/>
+		<security:intercept-url pattern="/addtocart" access="ROLE_USER"/>
+		<security:form-login login-page="/login"/>	
+	 </security:http>
+
+	<security:authentication-manager>
+		<security:authentication-provider>
+				
+			
+			<security:password-encoder ref="encoder" />
+			
+			<security:jdbc-user-service data-source-ref="driverManagerDataSource"
+	   		   								users-by-username-query="select customer_id,password,enabled from miraclestore_dev.tbl_customer where customer_id=?"			
+											authorities-by-username-query="select u.customer_id,r.authority from miraclestore_dev.tbl_customer u,miraclestore_dev.tbl_roles r
+			where u.customer_id=r.customer_id and u.customer_id=?"/>
+		
+			
+		</security:authentication-provider>		
+	</security:authentication-manager>
+	
+
+	
+	<bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">	
+  	</bean>
+
+</beans>
