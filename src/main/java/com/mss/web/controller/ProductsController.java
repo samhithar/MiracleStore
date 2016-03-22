@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +21,19 @@ import com.mss.app.dao.IProductDAO;
 @Controller
 @SessionAttributes("products")
 public class ProductsController {
-
+	
+	
+	double totalprice;
+	Long productcount;
+	
 	@Autowired
 	private IProductDAO productDAO;
 
 	@RequestMapping(value = "/Products", method = RequestMethod.GET)
 	public String ProductsView(Model model) {
 		List<Product> products = productDAO.getProducts();
+		totalprice=productDAO.getTotalPrice(SecurityContextHolder.getContext().getAuthentication().getName());		
+		productcount=productDAO.getTotalCount(SecurityContextHolder.getContext().getAuthentication().getName());
 		model.addAttribute("products", products);
 		return "products";
 
@@ -37,7 +44,7 @@ public class ProductsController {
 		id = id + 1;
 		String image=null,description=null;
 		Product products = productDAO.getProduct(id);
-	    List<Product> productdata=(List<Product>)session.getAttribute("products");
+	    List<Product> productdata=productDAO.getProducts();
 	    for(Product product:productdata)	    	
 	    {
 	    	

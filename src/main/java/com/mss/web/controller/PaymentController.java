@@ -14,9 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,15 +21,16 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.mss.app.entity.AddressIds;
 import com.mss.app.dao.IAddressDAO;
 import com.mss.app.dao.ICustomerDAO;
 import com.mss.app.dao.IOrderDAO;
 import com.mss.app.dao.IProductDAO;
 import com.mss.app.entity.Address;
+import com.mss.app.entity.DatabaseCartdetail;
 import com.mss.app.entity.Order;
 import com.mss.app.entity.OrderConfirmation;
 import com.mss.app.entity.Payment;
+import com.mss.app.entity.Product;
 import com.mss.app.entity.TaxCalcUtil;
 
 
@@ -58,9 +56,10 @@ public class PaymentController {
 	        
 			List<Address> li = (List<Address>) session.getAttribute("shipAddress");
 			String shipState = li.get(0).getState();
-	
-		
-			TaxCalcUtil taxResponse=taxCalculation(shipState);
+			
+			
+			double price = (double) productDAO.getTotalPrice(SecurityContextHolder.getContext().getAuthentication().getName());
+			TaxCalcUtil taxResponse=taxCalculation(shipState,price);
 			
 	    	Payment payment  = new Payment();
 	    	payment.setProductPrice(taxResponse.getAmount());
@@ -91,7 +90,8 @@ public class PaymentController {
 	    	
 	    	List<Address> bill = (List<Address>) session.getAttribute("billAddress");
 	    	
-	    	TaxCalcUtil taxResponse = taxCalculation(shipState);
+	    	double price = (double) productDAO.getTotalPrice(SecurityContextHolder.getContext().getAuthentication().getName());
+			TaxCalcUtil taxResponse=taxCalculation(shipState,price);
 	    	
 	    	model.addAttribute("payment",payment);
 	    	payment.setAmount(taxResponse.getTotalAmount());
@@ -103,7 +103,7 @@ public class PaymentController {
 	    		redirectAttributes.addAttribute("message","Invalid Card");
 	    		return "redirect:/paymentController";
 	    	}else if(res.getResult().equalsIgnoreCase("Card Expired")){
-	    		redirectAttributes.addFlashAttribute("message", "You have entered a card with Expiry date");
+	    		redirectAttributes.addFlashAttribute("message", "Invalid Expiry date");
 	    		return "redirect:/paymentController";
 	    	}
 	    	else{
@@ -140,8 +140,17 @@ public class PaymentController {
 	    	String paymentcard = subCard.replaceAll(subCard, "************").concat(card.substring(12));
 	    	orderConfirmation.setCardNumber(paymentcard);
 	    	
-//	    	int id=1, quantity=5;
-//	    	productDAO.updateProductQuantity(id,quantity);
+	    	List<DatabaseCartdetail> userCartDetails = productDAO.getCartData(SecurityContextHolder.getContext().getAuthentication().getName());
+	    	int id, quantity;
+	    	for(DatabaseCartdetail userProductData : userCartDetails){
+	    		id=userProductData.getProdid();
+	    		quantity=userProductData.getProdquant();
+	    		Product product=productDAO.getProduct(id);
+	    		quantity=product.getQuantity()-quantity;
+		    	productDAO.updateProductQuantity(id,quantity);
+		    	productDAO.deleteProduct(userProductData.getId());
+	    	}
+	    	
 	    	
 	    	orderConfirmation.setCartDetails(orderConfirmation.getCartDetails());
 	    	orderConfirmation.setTotalAmount(res.getAmount());
@@ -164,11 +173,11 @@ public class PaymentController {
 	    	
 	    }
 	    
-	    public TaxCalcUtil taxCalculation(String state){
+	    public TaxCalcUtil taxCalculation(String state,double price){
 	    	
 	    	TaxCalcUtil taxCalcUtil = new TaxCalcUtil();
 			taxCalcUtil.setState(state);
-			taxCalcUtil.setAmount(100);
+			taxCalcUtil.setAmount(price);			
 			
 			RestTemplate restTemplate = new RestTemplate();
 	    	List<HttpMessageConverter<?>> list = new ArrayList<HttpMessageConverter<?>>();

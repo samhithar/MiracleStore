@@ -1,5 +1,11 @@
 package com.mss.app.dao;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -11,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mss.app.entity.Customer;
+import com.mss.app.entity.Roles;
 
 @Repository
 public class CustomerDAO implements ICustomerDAO {
@@ -23,6 +30,38 @@ public class CustomerDAO implements ICustomerDAO {
 		Session session = sessionFactory.getCurrentSession();
 		session.save(customer);
 
+	}
+	
+	
+	public void addRole(Roles role) {
+			try{
+			
+			Class.forName("org.gjt.mm.mysql.Driver");
+
+			Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/miraclestore_dev","root", "mani@1492");
+			
+			Statement statement = connection.createStatement();
+			
+			String insertQuery = "Insert into miraclestore_dev.tbl_roles(customer_id,authority) values (?,?)";
+			
+			System.out.println(insertQuery);
+			
+			PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+			
+			preparedStatement.setString(1,role.getCustomerId());
+			preparedStatement.setString(2,role.getAuthority());
+			
+			int i= preparedStatement.executeUpdate();
+			
+			System.out.println(i+"added");
+			connection.close();
+			return;
+		
+		}
+		catch (ClassNotFoundException | SQLException e) {			
+			e.printStackTrace();
+		}
+	
 	}
 	
 	
@@ -89,5 +128,15 @@ public class CustomerDAO implements ICustomerDAO {
 			}
 			
 			return name;
+		}
+	 
+	 @Transactional(propagation = Propagation.REQUIRED)
+		public void deleteCustomer(String customerId) {
+			
+			Session session = sessionFactory.getCurrentSession();
+			
+			Query query = session.createQuery("update Customer set enabled = '0' where customerId = '"+customerId+"'");
+			 query.executeUpdate();
+
 		}
 }

@@ -31,13 +31,6 @@ public String getProductDescription(String name);
 
 
 
-
-
-
-
-
-
-
 public void insertCartValues(long id,String user,double prodprice,int prodid,int prodquant,String prodname);
 
 public boolean getDatabaseUpdate(int id);

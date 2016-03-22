@@ -2,15 +2,15 @@ package com.mss.app.dao;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.mss.app.entity.Customer;
+import com.mss.app.entity.Roles;
 
 public interface ICustomerDAO {
 	
 	
 	public void addCustomer(Customer customer);
+	
+	public void addRole(Roles role);
 	
 	public Customer getCustomerById(String id);
 	
@@ -23,4 +23,6 @@ public interface ICustomerDAO {
 	String getCustomerEmail(String customerId);
 
 	String getCustomerName(String customerId);
+	
+	public void deleteCustomer(String customerId);
 }

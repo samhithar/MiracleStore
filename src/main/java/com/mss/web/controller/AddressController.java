@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mss.app.dao.IAddressDAO;
 import com.mss.app.dao.ICustomerDAO;
@@ -69,7 +70,7 @@ public class AddressController {
 	}
 	
 	@RequestMapping(value="/addressProcess",method=RequestMethod.POST)
-	public String processRegister(@ModelAttribute("address") @Valid Address address,BindingResult bindingResult,Model model, HttpServletRequest request){
+	public String processRegister(@ModelAttribute("address") @Valid Address address,BindingResult bindingResult,Model model, HttpServletRequest request, RedirectAttributes redirectAttributes){
 				
 	
 		if(bindingResult.hasErrors()){			
@@ -85,18 +86,22 @@ public class AddressController {
 			}
 		}
 		
-		if(addressFound)
+		if(addressFound){
 			addressDAO.updateAddress(address);
-			
-		else
-			addressDAO.addAddress(address);	
-		
-		
-		model.addAttribute("address", address);
-		
-		
-		return "redirect:/addressProcess";
+		}	
+		else{	    		
+    		if(addressDAO.getAddressByCustomerId(SecurityContextHolder.getContext().getAuthentication().getName()).size()<5){    			
+    			addressDAO.addAddress(address);
+    			model.addAttribute("address", address);
+    		return "redirect:/addressProcess";
+    		}
+    		else{
+    			redirectAttributes.addFlashAttribute("message", "Cannot add more than 5 addresses");
+    			return "redirect:/addressProcess";
+    		}
 				
+		}	
+		return "redirect:/addressProcess";
 	}
 
 }

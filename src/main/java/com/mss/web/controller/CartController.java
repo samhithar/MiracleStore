@@ -22,7 +22,7 @@ import com.mss.app.dao.IProductDAO;
 
 
 @Controller
-@SessionAttributes({"cartdetails","images"})
+@SessionAttributes({"cartdetails","images","productdescription","result"})
 public class CartController {
 
 
@@ -56,13 +56,12 @@ public class CartController {
 				if(databasecartddetail.getProdid()==products.getId())
 				{
 					images.add(products.getImage());	
-					productdescription.add(products.getDescription());
+					productdescription.add(products.getDescription());					
+					System.out.println(products.getQuantity());
 					result.add(products.getQuantity());
-				}
-				
-				
-			}
-			
+					
+				}			
+			}			
 		}
 		if(totalprice==0 && productcount==0)
 		{
@@ -86,6 +85,7 @@ public class CartController {
 		
 		int produpdate=Integer.parseInt(request.getParameter("quantity")); 
 		int prodid=Integer.parseInt(request.getParameter("productid"));
+		//int index=Integer.parseInt(request.getParameter("index"));
 		int oldprodquant=0;
 		double prodsprice=0;		
 		List<DatabaseCartdetail>cartdetails=(List<DatabaseCartdetail>)session.getAttribute("cartdetails");
@@ -102,36 +102,36 @@ public class CartController {
 				oldprodquant=crtdetails.getProdquant();
 				prodsprice=crtdetails.getProdprice();
 				crtdetails.setProdquant(produpdate);
-				productDao.getProductquant(crtdetails.getUserid(),cartdetails);
-				
-				System.out.println(oldprodquant);
-				System.out.println(prodsprice);
+				productDao.getProductquant(crtdetails.getUserid(),cartdetails);				
 			}
 		}
 		if(produpdate>oldprodquant)
-		{
-			System.out.println("inside >"+totalprice);
+		{			
 			finalupdate=produpdate-oldprodquant;
 			totalprice+=(finalupdate*prodsprice);
-			session.setAttribute("totalprice", totalprice);
-			System.out.println("produpdate>oldprodquant"+totalprice);	
+			session.setAttribute("totalprice", totalprice);			
 		}
 		else
-		{
-			System.out.println("inside <"+totalprice);
+		{			
 			finalupdate=oldprodquant-produpdate;
 			totalprice-=(finalupdate*prodsprice);
 			session.setAttribute("totalprice", totalprice);
-			System.out.println("produpdate<oldprodquant"+totalprice);	
 		}		
-        session.setAttribute("cartdetails",cartdetails);
-		System.out.println(totalprice);
+        session.setAttribute("cartdetails",cartdetails);		
         }
         else
         {
         	
         	int id=(Integer.parseInt(request.getParameter("productid")));
         	productDao.deleteProduct(id);
+        	List<Integer> result=(List<Integer>)session.getAttribute("result");
+        	Iterator i=result.listIterator();
+        	while(i.hasNext())
+        	{
+        		int i1=(Integer)i.next();
+        		if(i1==id)
+        			result.remove("i1");
+        	}
         	session.setAttribute("productcount",productcount);		
         	List<DatabaseCartdetail>cartdetails=(List<DatabaseCartdetail>)session.getAttribute("cartdetails");
     		Iterator cartiterator=cartdetails.listIterator();    		    		
@@ -153,6 +153,7 @@ public class CartController {
 			
 			totalprice-=(oldprodquant*prodsprice);
 			session.setAttribute("totalprice", totalprice);
+			/*map.addAttribute("index",index);*/
         	
         }
        

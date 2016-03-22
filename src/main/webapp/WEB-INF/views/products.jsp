@@ -23,7 +23,7 @@
 				   	   	
 				   	  </a>
 				   </div>
-				    <h5><a href="Products/1">${products.get(0).name}</a></h5>
+				    <h5><a href="Products/0">${products.get(0).name}</a></h5>
 					<div class="size_1">
 				     	<span class="item_price">${products.get(0).price}</span>
 		      		    <div class="clearfix"></div>

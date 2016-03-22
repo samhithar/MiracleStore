@@ -73,7 +73,9 @@ function limit(element)
 <!-- Add New Address -->
 
 			<div class="main-page signup-page">
+				
 			
+        
 				<p class="creating"></p>
 				<div class="sign-up-row widget-shadow">
 					<form:form action="addressProcess" method="post" commandName="address" >
@@ -122,8 +124,7 @@ function limit(element)
 						</div>
 						<div class="sign-up2">
 							<div class="col-sm-8"><form:select id="country" path="country" class="form-control1">
-							 		<option>${country}</option>
-								<!--  <option>${address.country}</option> --> 
+							 		<option>${address.country}</option>								
 								 	</form:select>
 									<p><font color="red"><form:errors path="country"/></font></p>
 									</div>
@@ -137,10 +138,7 @@ function limit(element)
 						</div>
 						<div class="sign-up2">
 							<div class="col-sm-8"><form:select id="state" path="state" class="form-control1">
-							<%-- <%if(request.getParameter("edit")!=null){ %>
-								<option>${address.state}</option>
-								<%} %>	 --%>
-										<option>${state}</option>								
+									<option>${address.state}</option>								
 									</form:select>
 									<p><font color="red"><form:errors path="state"/></font></p>
 									</div>
@@ -159,6 +157,12 @@ function limit(element)
 						</div>
 						<div class="clearfix"> </div>
 					</div>
+					
+						<div align="left" class="message">
+            
+            <c:if test="${not empty message}"><font color="red"><c:out value="${message}" /></font>
+			</c:if>
+        </div>
 					
 					<div class="sub_home">
 						

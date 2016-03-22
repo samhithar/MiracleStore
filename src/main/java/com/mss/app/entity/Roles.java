@@ -1,11 +1,14 @@
 package com.mss.app.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 public class Roles {
 	
-	
-	private String customerId;
+	private String customerId;	
 	String authority;
 		
 	private Customer customer;

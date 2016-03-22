@@ -40,8 +40,7 @@ public class ShoppingCartController {
 	@Autowired
 	private IProductDAO productDao;
 	
-	@Autowired
-	private IProductDAO productDAO;
+	
      
 
 
@@ -73,12 +72,12 @@ public class ShoppingCartController {
 		productDao.insertCartValues(productcount,user,price,productspecificid, prodquant, name) ;
 		else
 		{
-			productDao.	sameProductUpdate(productspecificid, prodquant);
+			productDao.sameProductUpdate(productspecificid, prodquant);
 			productcount--;
 		}
 		totalprice+=price*prodquant;
 		System.out.println("after calculating "+totalprice);
-		List<Product> products = productDAO.getProducts();
+		List<Product> products = productDao.getProducts();
 		productcount+=1;
 		System.out.println("productcount "+productcount);
 		modelMap.addAttribute("id",productspecificid);

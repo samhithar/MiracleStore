@@ -46,7 +46,7 @@
 					       <div class="clearfix"></div>
 					     </div>
 			            <form action="${pageContext.request.contextPath}/addtocart" method="post">
-						Quantity : <input type="text" name="quantity" min= "0" max="5" value="1" />
+						Quantity : <input type="number" name="quantity" min= "0" max="5" value="1" />
 						<input type="hidden" name="productid" value="${products.id}" >
 						<input type="submit" value="Add to cart"/>
 						</form>

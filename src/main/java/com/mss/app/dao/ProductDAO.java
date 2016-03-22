@@ -16,7 +16,7 @@ import com.mss.app.entity.DatabaseCartdetail;
 import com.mss.app.entity.Order;
 import com.mss.app.entity.Product;
 
-@Repository("productDao")
+@Repository
 public class ProductDAO implements IProductDAO {
 
 	@Autowired
@@ -64,9 +64,9 @@ public class ProductDAO implements IProductDAO {
 	@Override
 	public Product getProduct(int id) {
 		Session session = sessionFactory.openSession();
-		Product products = (Product) session.get(Product.class, id);
+		Product product = (Product) session.get(Product.class, id);
 		session.close();
-		return products;
+		return product;
 
 	}
 
@@ -150,25 +150,29 @@ public class ProductDAO implements IProductDAO {
 			session.close();
 			return description;
 		}
-
+	
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public void insertCartValues(long id,String user,double prodprice,int prodid,int prodquant,String prodname)
-	{
+	 public void insertCartValues(long id,String user,double prodprice,int prodid,int prodquant,String prodname)
+		{
 
-	Session session=sessionFactory.getCurrentSession();
-	
-	DatabaseCartdetail databasedetail=new DatabaseCartdetail();
+			Session session=sessionFactory.openSession();
+			session.beginTransaction();
+			DatabaseCartdetail databasedetail=new DatabaseCartdetail();
 
-	databasedetail.setUserid(user);
-	databasedetail.setProdprice(prodprice);
-	databasedetail.setProdid(prodid);
-	databasedetail.setProdquant(prodquant);
-	databasedetail.setProdname(prodname);
-	session.save(databasedetail);	
-	
+			databasedetail.setUserid(user);
+			databasedetail.setProdprice(prodprice);
+			databasedetail.setProdid(prodid);
+			databasedetail.setProdquant(prodquant);
+			databasedetail.setProdname(prodname);
+			session.save(databasedetail);		
+			session.getTransaction().commit();
 
-	}
+			session.close();
+
+		}
+
+
+
 
 	@Override
 	public boolean getDatabaseUpdate(int id)
@@ -188,7 +192,8 @@ public class ProductDAO implements IProductDAO {
 	}
 	else    
 	result=true;
-
+	
+	session.close();
 	 return result;
 	}
 
@@ -261,7 +266,7 @@ public class ProductDAO implements IProductDAO {
 	public void deleteProduct(int id) {
 		Session session=sessionFactory.openSession();
 		session.beginTransaction();
-		session.createQuery("delete from DatabaseCartdetail d where d.prodid="+id).executeUpdate();	
+		session.createQuery("delete from DatabaseCartdetail d where d.id="+id).executeUpdate();	
 		session.getTransaction().commit();						
 		session.close();
 	}

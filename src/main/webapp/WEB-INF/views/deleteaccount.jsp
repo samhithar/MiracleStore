@@ -10,9 +10,11 @@
 			</div>
 			
 		    <div class="form-group">
+				<form:form action="deleteProfileProcess" method="post">
 				<div class="col-sm-8">
-				<button type="submit" class="btn btn-default">Delete Account</button>
+				<input type="submit" value="Delete Account">
 				</div>
+				</form:form>
 			</div>
 </div>
 

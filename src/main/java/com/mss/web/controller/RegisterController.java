@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import com.mss.app.dao.ICustomerDAO;
 import com.mss.app.dao.PasswordEncoder;
 import com.mss.app.entity.Customer;
+import com.mss.app.entity.Roles;
 import com.mss.web.validator.RegisterValidator;
 
 
@@ -55,6 +56,8 @@ public class RegisterController {
 		
 		customer.setPassword(passwordEncoder.passwordEncoder().encode(customer.getPassword()));
 		customerDAO.addCustomer(customer);
+		Roles role=new Roles(customer.getCustomerId(),"ROLE_USER");
+		customerDAO.addRole(role);
 		model.addAttribute("customer", customer);
 		
 		return "login";

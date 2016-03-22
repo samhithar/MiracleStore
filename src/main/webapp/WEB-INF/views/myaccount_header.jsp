@@ -88,7 +88,7 @@ Date   : 02-26-2016
 							<a href="addressProcess" class="chart-nav"><i class="fa fa-bar-chart nav_icon"></i>Address Book</a>
 						</li>
 						<li>
-							<a href="#"><i class="fa fa-table nav_icon"></i>Delete Account</a>
+							<a href="deleteProfileProcess"><i class="fa fa-table nav_icon"></i>Delete Account</a>
 						</li>
 					</ul>
 					<!-- //sidebar-collapse -->

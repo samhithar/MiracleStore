@@ -1,6 +1,6 @@
 package com.mss.web.controller;
 
-import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +57,22 @@ public class UpdateProfileController {
 		model.addAttribute("customer", customer);
 		
 		return "redirect:/updateProfileProcess";
+	}
+	
+	@RequestMapping(value="/deleteProfileProcess",method=RequestMethod.GET)
+	public String showdeleteProfileView(ModelMap modelMap){
+		return "/deleteaccount";
+	}
+	
+	@RequestMapping(value="/deleteProfileProcess",method=RequestMethod.POST)
+	public String deleteProfileProcess(HttpSession session, Model model){
+		
+		System.out.println("inside delete");
+		customerDAO.deleteCustomer(SecurityContextHolder.getContext().getAuthentication().getName());
+		session.invalidate();
+		return "redirect:/j_spring_security_logout";
+
+
 	}
 
 }
