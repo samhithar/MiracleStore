@@ -32,7 +32,6 @@ public class CustomerDAO implements ICustomerDAO {
 
 	}
 	
-	
 	public void addRole(Roles role) {
 			try{
 			
